@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body id="body">
+
+    <header class="header">
+
+        <h1 id="title">🏠 Real Estate Dashboard</h1>
+
+        <div class="top-controls">
+
+            <select id="languageSelect" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+            </select>
+
+            <button onclick="toggleDarkMode()">
+                🌙 Dark Mode
+            </button>
+
+        </div>
+
+    </header>
+
+    <div class="container">
+
+        <img
+            src="{{ url_for('static', filename='house.jpg') }}"
+            class="banner-image"
+            alt="House">
+
+        <form method="POST">
+
+            <label id="areaLabel">Area (sq ft)</label>
+
+            <input
+                type="number"
+                name="area"
+                value="{{ form_data.area }}"
+                required>
+
+            <label id="bedroomLabel">Bedrooms</label>
+
+            <input
+                type="number"
+                name="bedrooms"
+                value="{{ form_data.bedrooms }}"
+                required>
+
+            <label id="bathroomLabel">Bathrooms</label>
+
+            <input
+                type="number"
+                name="bathrooms"
+                value="{{ form_data.bathrooms }}"
+                required>
+
+            <label id="typeLabel">House Type</label>
+
+            <select name="house_type">
+
+                <option value="Apartment"
+                    {% if form_data.house_type == "Apartment" %}selected{% endif %}>
+                    Apartment
+                </option>
+
+                <option value="Villa"
+                    {% if form_data.house_type == "Villa" %}selected{% endif %}>
+                    Villa
+                </option>
+
+                <option value="Independent House"
+                    {% if form_data.house_type == "Independent House" %}selected{% endif %}>
+                    Independent House
+                </option>
+
+            </select>
+
+            <label id="cityLabel">City</label>
+
+            <input
+                type="text"
+                name="city"
+                placeholder="Enter Any City"
+                value="{{ form_data.city }}"
+                required>
+
+            <button type="submit" class="predict-btn">
+                Predict Price
+            </button>
+
+        </form>
+
+        {% if result %}
+
+        <div class="result-card" id="resultSection">
+
+            <h2>💰 Estimated Price</h2>
+
+            <h1>₹ {{ result.price }}</h1>
+
+            <h3>{{ result.category }}</h3>
+
+            <hr>
+
+            <p><strong>City:</strong> {{ result.city }}</p>
+
+            <p><strong>House Type:</strong> {{ result.house_type }}</p>
+
+            <hr>
+
+            <h2>📈 EMI Calculator</h2>
+
+            <p>
+                Loan Amount (80%) :
+                ₹ {{ result.loan_amount }}
+            </p>
+
+            <p>
+                Monthly EMI :
+                ₹ {{ result.emi }}
+            </p>
+
+            <a
+                href="https://maps.google.com/?q={{ result.city }}"
+                target="_blank"
+                class="map-btn">
+
+                📍 Open in Google Maps
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+        <div class="history-card">
+
+            <h2>🕒 Prediction History</h2>
+
+            {% for item in history %}
+
+            <div class="history-item">
+                {{ item.city }} - {{ item.price }}
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+<script>
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+}
+
+function changeLanguage() {
+
+    let lang =
+        document.getElementById("languageSelect").value;
+
+    if(lang === "hi"){
+
+        document.getElementById("title").innerHTML =
+            "🏠 रियल एस्टेट डैशबोर्ड";
+
+        document.getElementById("areaLabel").innerHTML =
+            "क्षेत्रफल (sq ft)";
+
+        document.getElementById("bedroomLabel").innerHTML =
+            "बेडरूम";
+
+        document.getElementById("bathroomLabel").innerHTML =
+            "बाथरूम";
+
+        document.getElementById("typeLabel").innerHTML =
+            "घर का प्रकार";
+
+        document.getElementById("cityLabel").innerHTML =
+            "शहर";
+
+    } else {
+
+        document.getElementById("title").innerHTML =
+            "🏠 Real Estate Dashboard";
+
+        document.getElementById("areaLabel").innerHTML =
+            "Area (sq ft)";
+
+        document.getElementById("bedroomLabel").innerHTML =
+            "Bedrooms";
+
+        document.getElementById("bathroomLabel").innerHTML =
+            "Bathrooms";
+
+        document.getElementById("typeLabel").innerHTML =
+            "House Type";
+
+        document.getElementById("cityLabel").innerHTML =
+            "City";
+    }
+}
+
+window.onload = function(){
+
+    let result =
+        document.getElementById("resultSection");
+
+    if(result){
+
+        result.scrollIntoView({
+            behavior:"smooth"
+        });
+
+    }
+};
+
+</script>
+
+</body>
+</html>
